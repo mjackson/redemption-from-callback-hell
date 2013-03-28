@@ -21,17 +21,24 @@ A callback is a function that essentially disables the two most important abilit
       * Within the callback or
       * Within a function that you call from within the callback
     * Code shifts quickly to the right
+  * Little consistency between implementations
+
+### The Future: ES6 Generators (10 mins. with examples)
+
+  * First-class coroutines
+    * First class means you can pass them around like variables
+  * Encapsulate suspended execution context
 
 ### Promises
 
-Lots of programmers may have had a bad experience with promises in the past due to various poor implementations (e.g. jQuery.Deferred). We need a way to "reset" what the word means to them.
+Lots of programmers may have had a bad experience with promises in the past due to various poor implementations (e.g. jQuery.Deferred). They may think they already know what the word means without understanding it fully. We need a way to "reset" what the word means to them.
 
   * Please forget everything you know about:
     * Promises
     * Futures
     * Deferreds
 
-### What is a Promise? (5 mins.)
+### What is a Promise? (2 mins.)
 
   * Specifically, we're talking about Promises/A+
   * An asynchronous primitive
@@ -41,7 +48,7 @@ Lots of programmers may have had a bad experience with promises in the past due 
     * In contrast to libs like async.js (18 methods just for "flow control")
   * Parallels synchronous programming paradigms
 
-### then
+### then - onFulfilled/onRejected (5 mins. with examples)
 
   * Accepts 2 arguments: onFulfilled and onRejected
     * only one of onFulfilled or onRejected will be called, and only once
@@ -49,6 +56,9 @@ Lots of programmers may have had a bad experience with promises in the past due 
       * Async equivalent to `return`
     * onRejected is called with a single error
       * Async equivalent to `throw`
+
+### then - chaining (5 mins. with examples)
+
   * Returns a new promise
     * Allows chaining of promises
 
