@@ -1,10 +1,14 @@
+_Work in Progress_
+
+Apologies if this is a bit of a brain dump. Lots of this is stuff I wouldn't actually put on a slide, but just my own thoughts on the topic.
+
 ### Why (2 mins.)
 
   * Most asynchronous JavaScript APIs suck
 
 ### Welcome to Callback Hell (10 mins.)
 
-A callback is a function that essentially disables the two most important properties of functions: return and throw.
+A callback is a function that essentially disables the two most important abilities of functions: return and throw.
 
   * No return
     * A callback is called *for* you
@@ -18,11 +22,15 @@ A callback is a function that essentially disables the two most important proper
       * Within a function that you call from within the callback
     * Code shifts quickly to the right
 
+### Promises
+
+Lots of programmers may have had a bad experience with promises in the past due to various poor implementations (e.g. jQuery.Deferred). We need a way to "reset" what the word means to them.
+
   * Please forget everything you know about:
     * Promises
     * Futures
     * Deferreds
-  * 
+
 ### What is a Promise? (5 mins.)
 
   * Specifically, we're talking about Promises/A+
@@ -30,7 +38,7 @@ A callback is a function that essentially disables the two most important proper
     * You can think of it as an asynchronous var
   * Has a single method, "then"
     * Super simple spec is important
-    * In contrast to so-called "flow control" libraries with massive APIs
+    * In contrast to libs like async.js (18 methods just for "flow control")
   * Parallels synchronous programming paradigms
 
 ### then
