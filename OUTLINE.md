@@ -1,6 +1,6 @@
 _Work in Progress_
 
-Apologies if this is a bit of a brain dump. Lots of this is stuff I wouldn't actually put on a slide, but just my own thoughts on the topic.
+Apologies if this is a bit of a brain dump!
 
 ### Why (2 mins.)
 
@@ -20,16 +20,20 @@ A callback is a function that essentially disables the two most important abilit
     * All logic happens in one of two places:
       * Within the callback or
       * Within a function that you call from within the callback
-    * Code shifts quickly to the right
+    * Code indents quickly to the right
   * Little consistency between implementations
 
-### The Future: ES6 Generators (10 mins. with examples)
+### The Future: ES6 Generators (3 mins. with an example)
 
   * First-class coroutines
     * First class means you can pass them around like variables
   * Encapsulate suspended execution context
+  * Demonstrate using SpiderMonkey shell
+    * Maybe task.js?
 
-### Promises
+** Would be neat to show a good example of some ES6 generator code that is rewritten to use promises in ES5. Could make a nice transition into Promises to help people understand that it's not just about aggregating callbacks. **
+
+### Promises (2 mins.)
 
 Lots of programmers may have had a bad experience with promises in the past due to various poor implementations (e.g. jQuery.Deferred). They may think they already know what the word means without understanding it fully. We need a way to "reset" what the word means to them.
 
@@ -62,24 +66,10 @@ Lots of programmers may have had a bad experience with promises in the past due 
   * Returns a new promise
     * Allows chaining of promises
 
-### What a Promise Isn't
+### Asynchronous API Examples (remainder)
 
-  * Callback aggregation
-  * 
+  * Finding the first file in an array of possible file names that exists on a file system
+  * Rendering a bunch of partials for a larger template
+  * Streaming a multipart upload to disk
+  * Others?
 
-### Asynchronous API design
-
-### Callbacks as a poor replacement for return/throw (10 mins.)
-
-  * Functions can do 2 things: return and throw
-  * Can't do either from within a callback
-  * Callbacks (node-style) are the bare minimum replacement
-  * Caveats:
-    * No guarantees or consistency between implementations
-    * APIs for handling callbacks can get very large, hard to remember
-    * Errors don't unwind the stack, require manual propagation
-    * Everything needs to be done in the callback, code quickly shifts to the right
-
-### 
-
-  
