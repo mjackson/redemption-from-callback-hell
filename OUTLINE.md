@@ -33,7 +33,7 @@ A callback is a function that essentially disables the two most important abilit
 
 ** Would be neat to show a good example of some ES6 generator code that is rewritten to use promises in ES5. Could make a nice transition into Promises to help people understand that it's not just about aggregating callbacks. **
 
-### Promises (2 mins.)
+### Promises Reset (2 mins.)
 
 Lots of programmers may have had a bad experience with promises in the past due to various poor implementations (e.g. jQuery.Deferred). They may think they already know what the word means without understanding it fully. We need a way to "reset" what the word means to them.
 
@@ -45,10 +45,11 @@ Lots of programmers may have had a bad experience with promises in the past due 
 ### What is a Promise? (2 mins.)
 
   * Specifically, we're talking about Promises/A+
+    * https://github.com/promises-aplus/promises-spec
   * An asynchronous primitive
     * You can think of it as an asynchronous var
   * Has a single method, "then"
-    * Super simple spec is important
+    * Super small/simple spec is important
     * In contrast to libs like async.js (18 methods just for "flow control")
   * Parallels synchronous programming paradigms
 
@@ -60,6 +61,71 @@ Lots of programmers may have had a bad experience with promises in the past due 
       * Async equivalent to `return`
     * onRejected is called with a single error
       * Async equivalent to `throw`
+
+example:
+
+```js
+var timeline = getHomeTimeline('mjackson');
+var tweets = timeline.tweets;
+```
+
+becomes:
+
+```js
+getHomeTimeline('mjackson').then(function (timeline) {
+  return timeline.tweets;
+});
+```
+
+throw:
+
+```js
+var timeline = getHomeTimeline('mjackson');
+if (!timeline) throw new Error('no timeline!');
+```
+
+becomes:
+
+```js
+getHomeTimeline('mjackson').then(function (timeline) {
+  if (!timeline) throw new Error('no timeline!');
+  return timeline;
+});
+```
+
+catch:
+
+```js
+try {
+  deliverTweetTo('mjackson');
+} catch (error) {
+  handleError(error);
+}
+```
+
+becomes:
+
+```js
+deliverTweetTo('mjackson').then(undefined, handleError);
+```
+
+rethrow:
+
+```js
+try {
+  var timeline = getHomeTimeline('mjackson');
+} catch (error) {
+  throw new Error('There was an error: ' + error.message);
+}
+```
+
+becomes:
+
+```js
+getHomeTimeline('mjackson').then(undefined, function (error) {
+  throw new Error('There was an error: ' + error.message);
+});
+```
 
 ### then - chaining (5 mins. with examples)
 
