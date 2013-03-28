@@ -51,9 +51,9 @@ Lots of programmers may have had a bad experience with promises in the past due 
   * Has a single method, "then"
     * Super small/simple spec is important
     * In contrast to libs like async.js (18 methods just for "flow control")
-  * Parallels synchronous programming paradigms
+  * _Parallels synchronous programming paradigms_
 
-### then - onFulfilled/onRejected (5 mins. with examples)
+### then - onFulfilled/onRejected (10 mins. with examples)
 
   * Accepts 2 arguments: onFulfilled and onRejected
     * only one of onFulfilled or onRejected will be called, and only once
@@ -130,7 +130,13 @@ getHomeTimeline('mjackson').then(undefined, function (error) {
 ### then - chaining (5 mins. with examples)
 
   * Returns a new promise
-    * Allows chaining of promises
+  * Allows chaining of promises
+
+chaining example:
+
+```js
+
+```
 
 ### Asynchronous API Examples (remainder)
 
