@@ -23,6 +23,35 @@ A callback is a function that essentially disables the two most important abilit
     * Code indents quickly to the right
   * Little consistency between implementations
 
+Typical callback style:
+
+```js
+getUser('mjackson', function (error, user) {
+  // Do something with the user...
+});
+```
+
+```js
+// Very bad, please don't ever do this!
+getUser('mjackson', function (error, user) {
+  if (error) throw error;
+  // Do something with the user...
+});
+```
+
+```js
+// A bit better, but wordy!
+function getNewTweetsFor(username, callback) {
+  getUser(username, function (error, user) {
+    if (error) {
+      callback(error);
+    } else {
+      getNewTweets(user, callback);
+    }
+  });
+}
+```
+
 ### The Future: ES6 Generators (3 mins. with an example)
 
   * First-class coroutines
@@ -53,7 +82,7 @@ Lots of programmers may have had a bad experience with promises in the past due 
     * In contrast to libs like async.js (18 methods just for "flow control")
   * _Parallels synchronous programming paradigms_
 
-### then - onFulfilled/onRejected (10 mins. with examples)
+### then - onFulfilled/onRejected (2 mins.)
 
   * Accepts 2 arguments: onFulfilled and onRejected
     * only one of onFulfilled or onRejected will be called, and only once
@@ -62,80 +91,137 @@ Lots of programmers may have had a bad experience with promises in the past due 
     * onRejected is called with a single error
       * Async equivalent to `throw`
 
-example:
+### then - 4 basic scenarios going from sync => async (10 mins.)
+
+Example: Basic functional transform
 
 ```js
-var timeline = getHomeTimeline('mjackson');
-var tweets = timeline.tweets;
+var user = getUser('mjackson');
+var name = user.name;
 ```
 
-becomes:
-
 ```js
-getHomeTimeline('mjackson').then(function (timeline) {
-  return timeline.tweets;
+getUser('mjackson').then(function (user) {
+  return user.name;
 });
 ```
 
-throw:
+Example: Throwing an error
 
 ```js
-var timeline = getHomeTimeline('mjackson');
-if (!timeline) throw new Error('no timeline!');
+var user = getUser('mjackson');
+if (!user) throw new Error('no user!');
+var name = user.name;
 ```
 
-becomes:
-
 ```js
-getHomeTimeline('mjackson').then(function (timeline) {
-  if (!timeline) throw new Error('no timeline!');
-  return timeline;
+getUser('mjackson').then(function (user) {
+  if (!timeline) throw new Error('no user!');
+  return user.name;
 });
 ```
 
-catch:
+Example: Catching and handling an error
 
 ```js
 try {
-  deliverTweetTo('mjackson');
+  deliverTweetTo(tweet, 'mjackson');
 } catch (error) {
   handleError(error);
 }
 ```
 
-becomes:
-
 ```js
-deliverTweetTo('mjackson').then(undefined, handleError);
+deliverTweetTo(tweet, 'mjackson')
+  .then(undefined, handleError);
 ```
 
-rethrow:
+Example: Catching and re-throwing an error
 
 ```js
 try {
-  var timeline = getHomeTimeline('mjackson');
+  var user = getUser('mjackson');
 } catch (error) {
   throw new Error('There was an error: ' + error.message);
 }
 ```
 
-becomes:
-
 ```js
-getHomeTimeline('mjackson').then(undefined, function (error) {
+getUser('mjackson').then(undefined, function (error) {
   throw new Error('There was an error: ' + error.message);
 });
 ```
 
-### then - chaining (5 mins. with examples)
+### then - Chaining operations (5 mins. with examples)
 
   * Returns a new promise
   * Allows chaining of promises
 
-chaining example:
+```js
+var user = getUser('mjackson');
+var tweets = getNewTweets(user);
+updateTimeline(tweets);
+```
 
 ```js
+getUser('mjackson')
+  .then(getNewTweets)
+  .then(updateTimeline);
+```
 
+### then - Error propagation (5 mins. with examples)
+
+  * Automatically propagates errors to callers
+
+Example: What if one of our functions throws?
+
+```js
+try {
+  var user = getUser('mjackson');
+  var tweets = getNewTweets(user);
+  updateTimeline(tweets);
+} catch (error) {
+  handleError(error);
+}
+```
+
+```js
+getUser('mjackson')
+  .then(getNewTweets)
+  .then(updateTimeline, handleError);
+```
+
+### then - Direct comparison with callbacks (5 mins. with examples)
+
+```js
+getUser('mjackson', function (error, user) {
+  if (error) {
+    handleError(error);
+  } else {
+    getNewTweets(user, function (error, tweets) {
+      if (error) {
+        handleError(error);
+      } else {
+        updateTimeline(tweets, function (error) {
+          if (error) handleError(error);
+        });
+      }
+    });
+  }
+});
+```
+
+```js
+// Callbacks, complete with timebombs!
+getUser('mjackson', function (error, user) {
+  if (error) throw error;
+  getNewTweets(user, function (error, tweets) {
+    if (error) throw error;
+    updateTimeline(tweets, function (error) {
+      if (error) throw error;
+    });
+  });
+});
 ```
 
 ### Asynchronous API Examples (remainder)
