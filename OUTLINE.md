@@ -31,6 +31,8 @@ getUser('mjackson', function (error, user) {
 });
 ```
 
+You see this kind of thing in node.js examples all the time:
+
 ```js
 // Very bad, please don't ever do this!
 getUser('mjackson', function (error, user) {
@@ -52,7 +54,7 @@ function getNewTweetsFor(username, callback) {
 }
 ```
 
-### The Future: ES6 Generators (3 mins. with an example)
+### The Future: ES6 Generators (3 mins.)
 
   * First-class coroutines
     * First class means you can pass them around like variables
@@ -61,6 +63,25 @@ function getNewTweetsFor(username, callback) {
     * Maybe task.js?
 
 ** Would be neat to show a good example of some ES6 generator code that is rewritten to use promises in ES5. Could make a nice transition into Promises to help people understand that it's not just about aggregating callbacks. **
+
+Run this in the js shell:
+
+```js
+function fib() {
+  var i = 0, j = 1;
+  while (true) {
+    yield i;
+    var t = i;
+    i = j;
+    j += t;
+  }
+}
+
+var g = fib();
+for (var i = 0; i < 12; i++) {
+  print(g.next());
+}
+```
 
 ### Promises Reset (2 mins.)
 
@@ -152,7 +173,7 @@ getUser('mjackson').then(undefined, function (error) {
 });
 ```
 
-### then - Chaining operations (5 mins. with examples)
+### then - Chaining operations (5 mins.)
 
   * Returns a new promise
   * Allows chaining of promises
@@ -169,7 +190,7 @@ getUser('mjackson')
   .then(updateTimeline);
 ```
 
-### then - Error propagation (5 mins. with examples)
+### then - Error propagation (5 mins.)
 
   * Automatically propagates errors to callers
 
@@ -191,7 +212,7 @@ getUser('mjackson')
   .then(updateTimeline, handleError);
 ```
 
-### then - Direct comparison with callbacks (5 mins. with examples)
+### then - Comparison with callbacks (3 mins.)
 
 ```js
 getUser('mjackson', function (error, user) {
@@ -224,10 +245,51 @@ getUser('mjackson', function (error, user) {
 });
 ```
 
+### Going from Callbacks to Promises
+
+  * require('q').nfbind(fs.stat)
+  * require('when/node/function').lift(fs.stat);
+  * require('rsvp').denodeify(fs.stat); // uses 2.0.0-rc1
+
 ### Asynchronous API Examples (remainder)
 
-  * Finding the first file in an array of possible file names that exists on a file system
+Example: Get some info about the first file in an array of possible files that exists on the file system
+
+First, use Q to wrap fs.stat.
+
+```js
+var q = require('q');
+var fileStat = q.nfbind(require('fs').stat);
+
+function getStat(file) {
+  return fileStat(file).then(null, handleStatError);
+}
+
+function handleStatError(error) {
+  if (error.code === 'ENOENT') return null;
+  throw error;
+}
+```
+
+Then, use Q.all to execute all operations in parallel and get the results.
+
+```js
+var possibleFiles = [ 'index.html', 'index.htm' ];
+q.all(possibleFiles.map(getStat)).then(function (stats) {
+  for (var i = 0, len = stats.length; i < len; ++i) {
+    if (stats[i]) {
+      return sendFile(possibleFiles[i], stats[i]);
+    }
+  }
+
+  return notFound();
+});
+```
+
+This is a piece of work that I actually did in strata: https://github.com/mjijackson/strata/commit/f5c7edfece8fb999017dd792542d0fc226ab8768
+
+Other ideas:
+
   * Rendering a bunch of partials for a larger template
   * Streaming a multipart upload to disk
   * Others?
-
