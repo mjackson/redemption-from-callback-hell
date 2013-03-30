@@ -6,6 +6,27 @@ Apologies if this is a bit of a brain dump!
 
   * Most asynchronous JavaScript APIs suck
 
+In this first example, both the getUser and query functions are synchronous. The second example demonstrates what the same functions look like when they are written using an asynchronous callback-based API.
+
+    function getUser(name) {
+      var sql = 'SELECT * FROM users WHERE name=?';
+      return query(sql, name);
+    }
+
+    function getUser(name, callback) {
+      var sql = 'SELECT * FROM users WHERE name=?';
+      return query(sql, name, function (error, user) {
+        if (error) {
+          callback(error);
+        } else if (!user) {
+          var error = throw new Error('no user!');
+          callback(error);
+        } else {
+          callback(null, user);
+        }
+      });
+    }
+
 ### Welcome to Callback Hell (10 mins.)
 
 A callback is a function that essentially disables the two most important abilities of functions: return and throw.
@@ -25,34 +46,28 @@ A callback is a function that essentially disables the two most important abilit
 
 Typical callback style:
 
-```js
-getUser('mjackson', function (error, user) {
-  // Do something with the user...
-});
-```
+    getUser('mjackson', function (error, user) {
+      // Do something with the user...
+    });
 
 You see this kind of thing in node.js examples all the time:
 
-```js
-// Very bad, please don't ever do this!
-getUser('mjackson', function (error, user) {
-  if (error) throw error;
-  // Do something with the user...
-});
-```
+    // Very bad, please don't ever do this!
+    getUser('mjackson', function (error, user) {
+      if (error) throw error;
+      // Do something with the user...
+    });
 
-```js
-// A bit better, but wordy!
-function getNewTweetsFor(username, callback) {
-  getUser(username, function (error, user) {
-    if (error) {
-      callback(error);
-    } else {
-      getNewTweets(user, callback);
+    // A bit better, but wordy!
+    function getNewTweetsFor(username, callback) {
+      getUser(username, function (error, user) {
+        if (error) {
+          callback(error);
+        } else {
+          getNewTweets(user, callback);
+        }
+      });
     }
-  });
-}
-```
 
 ### The Future: ES6 Generators (3 mins.)
 
@@ -66,22 +81,20 @@ function getNewTweetsFor(username, callback) {
 
 Run this in the js shell:
 
-```js
-function fib() {
-  var i = 0, j = 1;
-  while (true) {
-    yield i;
-    var t = i;
-    i = j;
-    j += t;
-  }
-}
+    function fib() {
+      var i = 0, j = 1;
+      while (true) {
+        yield i;
+        var t = i;
+        i = j;
+        j += t;
+      }
+    }
 
-var g = fib();
-for (var i = 0; i < 12; i++) {
-  print(g.next());
-}
-```
+    var generator = fib();
+    for (var i = 0; i < 12; i++) {
+      print(generator.next());
+    }
 
 ### Promises Reset (2 mins.)
 
@@ -116,79 +129,59 @@ Lots of programmers may have had a bad experience with promises in the past due 
 
 Example: Basic functional transform
 
-```js
-var user = getUser('mjackson');
-var name = user.name;
-```
+    var user = getUser('mjackson');
+    var name = user.name;
 
-```js
-getUser('mjackson').then(function (user) {
-  return user.name;
-});
-```
+    getUser('mjackson').then(function (user) {
+      return user.name;
+    });
 
 Example: Throwing an error
 
-```js
-var user = getUser('mjackson');
-if (!user) throw new Error('no user!');
-var name = user.name;
-```
+    var user = getUser('mjackson');
+    if (!user) throw new Error('no user!');
+    var name = user.name;
 
-```js
-getUser('mjackson').then(function (user) {
-  if (!timeline) throw new Error('no user!');
-  return user.name;
-});
-```
+    getUser('mjackson').then(function (user) {
+      if (!timeline) throw new Error('no user!');
+      return user.name;
+    });
 
 Example: Catching and handling an error
 
-```js
-try {
-  deliverTweetTo(tweet, 'mjackson');
-} catch (error) {
-  handleError(error);
-}
-```
+    try {
+      deliverTweetTo(tweet, 'mjackson');
+    } catch (error) {
+      handleError(error);
+    }
 
-```js
-deliverTweetTo(tweet, 'mjackson')
-  .then(undefined, handleError);
-```
+    deliverTweetTo(tweet, 'mjackson')
+      .then(undefined, handleError);
 
 Example: Catching and re-throwing an error
 
-```js
-try {
-  var user = getUser('mjackson');
-} catch (error) {
-  throw new Error('There was an error: ' + error.message);
-}
-```
+    try {
+      var user = getUser('mjackson');
+    } catch (error) {
+      throw new Error('There was an error: ' + error.message);
+    }
 
-```js
-getUser('mjackson').then(undefined, function (error) {
-  throw new Error('There was an error: ' + error.message);
-});
-```
+    getUser('mjackson').then(undefined, function (error) {
+      throw new Error('There was an error: ' + error.message);
+    });
 
-### then - Chaining operations (5 mins.)
+### then - Operations in sequence (5 mins.)
 
   * Returns a new promise
   * Allows chaining of promises
 
-```js
-var user = getUser('mjackson');
-var tweets = getNewTweets(user);
-updateTimeline(tweets);
-```
+    var user = getUser('mjackson');
+    var tweets = getNewTweets(user);
+    updateTimeline(tweets);
 
-```js
-getUser('mjackson')
-  .then(getNewTweets)
-  .then(updateTimeline);
-```
+    getUser('mjackson')
+      .then(getNewTweets)
+      .then(updateTimeline);
 
 ### then - Error propagation (5 mins.)
 
@@ -196,54 +189,61 @@ getUser('mjackson')
 
 Example: What if one of our functions throws?
 
-```js
-try {
-  var user = getUser('mjackson');
-  var tweets = getNewTweets(user);
-  updateTimeline(tweets);
-} catch (error) {
-  handleError(error);
-}
-```
+    try {
+      var user = getUser('mjackson');
+      var tweets = getNewTweets(user);
+      updateTimeline(tweets);
+    } catch (error) {
+      handleError(error);
+    }
 
-```js
-getUser('mjackson')
-  .then(getNewTweets)
-  .then(updateTimeline, handleError);
-```
+    getUser('mjackson')
+      .then(getNewTweets)
+      .then(updateTimeline, handleError);
 
 ### then - Comparison with callbacks (3 mins.)
 
-```js
-getUser('mjackson', function (error, user) {
-  if (error) {
-    handleError(error);
-  } else {
-    getNewTweets(user, function (error, tweets) {
+    getUser('mjackson', function (error, user) {
       if (error) {
         handleError(error);
       } else {
-        updateTimeline(tweets, function (error) {
-          if (error) handleError(error);
+        getNewTweets(user, function (error, tweets) {
+          if (error) {
+            handleError(error);
+          } else {
+            updateTimeline(tweets, function (error) {
+              if (error) handleError(error);
+            });
+          }
         });
       }
     });
-  }
-});
-```
 
-```js
-// Callbacks, complete with timebombs!
-getUser('mjackson', function (error, user) {
-  if (error) throw error;
-  getNewTweets(user, function (error, tweets) {
-    if (error) throw error;
-    updateTimeline(tweets, function (error) {
+    // Callbacks, complete with timebombs!
+    getUser('mjackson', function (error, user) {
       if (error) throw error;
+      getNewTweets(user, function (error, tweets) {
+        if (error) throw error;
+        updateTimeline(tweets, function (error) {
+          if (error) throw error;
+        });
+      });
     });
-  });
-});
-```
+
+### Promise libraries
+
+  * Q - https://github.com/kriskowal/q
+  * when - https://github.com/cujojs/when
+  * RSVP - https://github.com/tildeio/rsvp.js
+
+### then - Operations in parallel (5 mins.)
+
+    var q = require('q');
+
+    function getNewTweetsForUsers(users) {
+      var promises = users.map(getNewTweets);
+      return q.all(promises);
+    }
 
 ### Going from Callbacks to Promises
 
@@ -257,34 +257,30 @@ Example: Get some info about the first file in an array of possible files that e
 
 First, use Q to wrap fs.stat.
 
-```js
-var q = require('q');
-var fileStat = q.nfbind(require('fs').stat);
+    var q = require('q');
+    var fileStat = q.nfbind(require('fs').stat);
 
-function getStat(file) {
-  return fileStat(file).then(null, handleStatError);
-}
+    function getStat(file) {
+      return fileStat(file).then(null, handleStatError);
+    }
 
-function handleStatError(error) {
-  if (error.code === 'ENOENT') return null;
-  throw error;
-}
-```
+    function handleStatError(error) {
+      if (error.code === 'ENOENT') return null;
+      throw error;
+    }
 
 Then, use Q.all to execute all operations in parallel and get the results.
 
-```js
-var possibleFiles = [ 'index.html', 'index.htm' ];
-q.all(possibleFiles.map(getStat)).then(function (stats) {
-  for (var i = 0, len = stats.length; i < len; ++i) {
-    if (stats[i]) {
-      return sendFile(possibleFiles[i], stats[i]);
-    }
-  }
+    var possibleFiles = [ 'index.html', 'index.htm' ];
+    q.all(possibleFiles.map(getStat)).then(function (stats) {
+      for (var i = 0, len = stats.length; i < len; ++i) {
+        if (stats[i]) {
+          return sendFile(possibleFiles[i], stats[i]);
+        }
+      }
 
-  return notFound();
-});
-```
+      return notFound();
+    });
 
 This is a piece of work that I actually did in strata: https://github.com/mjijackson/strata/commit/f5c7edfece8fb999017dd792542d0fc226ab8768
 
