@@ -4,7 +4,7 @@ Apologies if this is a bit of a brain dump!
 
 ### Why Use Callbacks? (10 mins.)
 
-See examples/callback.js
+  See examples/1-callback-hell.js
 
   * We know how to write synchronous programs that block on IO
   * In order to not block, we need to make functions asynchronous
@@ -18,7 +18,7 @@ See examples/callback.js
 
 ### The Future: ES6 Generators (3 mins.)
 
-See examples/generator.js
+  See examples/2-generator.js
 
   * First-class coroutines
     * First class means you can pass them around like variables
@@ -51,7 +51,7 @@ Lots of programmers may have had a bad experience with promises in the past due 
 
 ### then - onFulfilled/onRejected (2 mins.)
 
-Example:
+  Example:
 
     getUser('mjackson').then(function (user) {
       // ...
@@ -68,7 +68,7 @@ Example:
 
 ### then - Core sync => async Transforms (7 mins.)
 
-See examples/transforms.js
+  See examples/3-transforms.js
 
   * There are 4 core sync => async transforms
     * Simple functional transform
@@ -78,7 +78,7 @@ See examples/transforms.js
 
 ### then - Chaining (7 mins.)
 
-See examples/sequence.js
+  See examples/4-sequence.js
 
   * Sync functions propagate values by simple assignment
   * Callbacks propagate values using callback arguments
@@ -87,7 +87,7 @@ See examples/sequence.js
 
 ### then - Handling errors (7 mins.)
 
-See examples/error-handling.js
+  See examples/5-error-handling.js
 
   * Sync try/catch automatically unwind the call stack
   * Callbacks require manual error propagation
@@ -102,11 +102,15 @@ See examples/error-handling.js
 
 ### then - Parallel operations using "all" (5 mins.)
 
+  See examples/6-parallel.js
+
   * Promise libraries usually include an all method for doing stuff in parallel
   * A powerful technique for executing multiple async operations in parallel
   * Aggregates the results
 
 ### Going from Callbacks to Promises in node.js using "denodeify" (3 mins.)
+
+  See examples/7-denodeify.js
 
   * Promise libraries usually include a method for coercing functions that expect node.js-style callbacks to functions that return a promise instead
     * require('q').denodeify(fs.readFile)
@@ -115,7 +119,7 @@ See examples/error-handling.js
 
 ### Bonus: Building promise-based HTTP servers in node.js
 
-See examples/http-server.js
+  See examples/8-http-server.js
 
   * Fault-tolerant servers
     * The request handler returns a promise
