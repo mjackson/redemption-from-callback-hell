@@ -24,6 +24,10 @@ function handleRequest(req) {
       headers: { 'Content-Type': 'text/html' },
       content: '<p>Hello world!</p>'
     });
+
+    // Simulate an error from somewhere down
+    // the call stack. The server won't crash.
+    //value.reject(new Error('boom!'));
   });
 
   return value.promise;
